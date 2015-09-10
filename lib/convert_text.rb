@@ -1,0 +1,27 @@
+require_relative 'charmap'
+class ConvertText
+
+  def self.to_braille(message)
+    chunks = to_chunk(message.chomp)
+    braille = ''
+    chunks.map do |chunk|
+      braille += chunk_to_char(chunk)
+    end
+    braille
+  end
+
+  def self.to_chunk(message)
+    chunks = []
+    message.gsub!(/([A-Z])/, '^\1').downcase! if message =~ /[A-Z]/
+    chunks << message.slice!(0..39) until message == ''
+    chunks
+  end
+
+  def self.chunk_to_char(chunk)
+    braille_line =  chunk.chars.map { |char| CHARMAP[char][0] }.join + "\n"
+    braille_line += chunk.chars.map { |char| CHARMAP[char][1] }.join + "\n"
+    braille_line += chunk.chars.map { |char| CHARMAP[char][2] }.join
+    braille_line += "\n\n" if chunk.chars.count == 40
+    braille = braille_line
+  end
+end

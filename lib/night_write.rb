@@ -1,8 +1,8 @@
-require_relative 'convert'
+require_relative 'convert_text'
 input_file = ARGV[0]
 output_file = ARGV[1]
 message = File.read(input_file)
-braille = Convert.to_braille(message)
+braille = ConvertText.to_braille(message)
 
 File.write(output_file, braille)
 
