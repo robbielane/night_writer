@@ -1,16 +1,22 @@
 require_relative 'charmap'
 class ConvertBraille
   def self.to_text(braille)
-    line_chars = {}
-    braille.lines.each_with_index do |line, index|
-      line_chars[index] = line.chomp.chars
-    end
-    line_chars = dechunkify(line_chars)
-    chars = lines_to_chars(line_chars)
+    line_characters = break_lines_into_characters(braille)
+
+    line_characters = dechunkify(line_characters)
+    chars = lines_to_chars(line_characters)
     string = ''
     chars.each { |index, value| string += CHARMAP.key(value) }
     add_upcase(string)
     string
+  end
+
+  def self.break_lines_into_characters(braille)
+    line_characters = {}
+    braille.lines.each_with_index do |line, index|
+      line_characters[index] = line.chomp.chars
+    end
+    line_characters
   end
 
   def self.lines_to_chars(lines)
@@ -21,9 +27,9 @@ class ConvertBraille
     end
     chars = {}
     line_pairs[0].length.times { |index| chars[index] = [] }
-    line_pairs[0].length.times { |index| chars[index]<< line_pairs[0].shift }
-    line_pairs[1].length.times { |index| chars[index]<< line_pairs[1].shift }
-    line_pairs[2].length.times { |index| chars[index]<< line_pairs[2].shift }
+    line_pairs[0].length.times { |index| chars[index] << line_pairs[0].shift }
+    line_pairs[1].length.times { |index| chars[index] << line_pairs[1].shift }
+    line_pairs[2].length.times { |index| chars[index] << line_pairs[2].shift }
     chars
   end
 
@@ -33,17 +39,15 @@ class ConvertBraille
   end
 
   def self.dechunkify(lines)
-    complete_lines = {}
-    complete_lines[0] = []
-    complete_lines[1] = []
-    complete_lines[2] = []
+    dechunkified_lines = {}
+    3.times { |n| dechunkified_lines[n] = [] }
     lines.delete_if { |line, value| value.empty? }
     lines.values.each_slice(3) do |one, two, three|
-      complete_lines[0] << one
-      complete_lines[1] << two
-      complete_lines[2] << three
+      dechunkified_lines[0] << one
+      dechunkified_lines[1] << two
+      dechunkified_lines[2] << three
     end
-    complete_lines.values.each { |line| line.flatten! }
-    complete_lines
+    dechunkified_lines.values.each { |line| line.flatten! }
+    dechunkified_lines
   end
 end
