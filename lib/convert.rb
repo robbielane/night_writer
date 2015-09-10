@@ -26,17 +26,32 @@ CHARMAP = {'a' => [['0', '.'], ['.', '.'], ['.', '.']],
            'x' => [['0', '0'], ['.', '.'], ['0', '0']],
            'y' => [['0', '0'], ['.', '0'], ['0', '0']],
            'z' => [['0', '.'], ['.', '0'], ['0', '0']],
-           ' ' => [['.', '.'], ['.', '.'], ['.', '.']],}
+           ' ' => [['.', '.'], ['.', '.'], ['.', '.']],
+           '^' => [['.', '.'], ['.', '.'], ['.', '0']]}
 
 
 class Convert
 
   def self.to_braille(message)
-    braille =  message.chars.map { |char| CHARMAP[char][0] }.join
-    braille += "\n"
-    braille += message.chars.map { |char| CHARMAP[char][1] }.join
-    braille += "\n"
-    braille += message.chars.map { |char| CHARMAP[char][2] }.join
+    chunks = to_chunk(message.chomp)
+    braille = ''
+    chunks.map do |chunk|
+      braille_line =  chunk.chars.map { |char| CHARMAP[char][0] }.join + "\n"
+      braille_line += chunk.chars.map { |char| CHARMAP[char][1] }.join + "\n"
+      braille_line += chunk.chars.map { |char| CHARMAP[char][2] }.join
+      braille_line += "\n\n" if chunk.chars.count == 40 
+      braille += braille_line
+    end
     braille
   end
+
+  def self.to_chunk(message)
+    chunks = []
+    message.gsub!(/([A-Z])/, '^\1').downcase! if message =~ /[A-Z]/
+    chunks << message.slice!(0..39) until message == ''
+    chunks
+  end
+
+
+
 end
