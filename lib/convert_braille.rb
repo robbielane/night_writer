@@ -2,7 +2,7 @@ require_relative 'charmap'
 class ConvertBraille
   def self.to_text(braille)
     line_chars = {}
-    braille.lines.map.with_index do |line, index|
+    braille.lines.each_with_index do |line, index|
       line_chars[index] = line.chomp.chars
     end
     line_chars = dechunkify(line_chars)

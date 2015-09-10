@@ -4,7 +4,7 @@ class ConvertText
   def self.to_braille(message)
     chunks = to_chunk(message.chomp)
     braille = ''
-    chunks.map do |chunk|
+    chunks.each do |chunk|
       braille += chunk_to_char(chunk)
     end
     braille
