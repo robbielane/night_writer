@@ -1,5 +1,5 @@
 require_relative 'charmap'
-require 'pry'
+
 class ConvertText
 
   def self.to_braille(message)

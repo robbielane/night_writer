@@ -1,5 +1,5 @@
-require 'pry'
 require_relative 'charmap'
+
 class ConvertBraille
   def self.to_text(braille)
     line_characters = break_lines_into_characters(braille)
@@ -25,6 +25,10 @@ class ConvertBraille
       line_pairs[index] = []
       line[1].each_slice(2) { |letter_pair| line_pairs[index] << letter_pair }
     end
+    chars = pair_characters(line_pairs)
+  end
+
+  def self.pair_characters(line_pairs)
     chars = {}
     line_pairs[0].length.times { |index| chars[index] = [] }
     line_pairs[0].length.times { |index| chars[index] << line_pairs[0].shift }
@@ -43,7 +47,7 @@ class ConvertBraille
     new_words = []
     words.each do |word|
       if word.start_with?('#')
-        new_words << word.chars.map { |char| char = CHARTONUM[char] }.join
+        new_words << word.chars.map { |char| char = CHARTONUM.fetch(char) }.join
       else
         new_words << word
       end
@@ -55,10 +59,10 @@ class ConvertBraille
     dechunkified_lines = {}
     3.times { |n| dechunkified_lines[n] = [] }
     lines.delete_if { |line, value| value.empty? }
-    lines.values.each_slice(3) do |one, two, three|
-      dechunkified_lines[0] << one
-      dechunkified_lines[1] << two
-      dechunkified_lines[2] << three
+    lines.values.each_slice(3) do |line_one, line_two, line_three|
+      dechunkified_lines[0] << line_one
+      dechunkified_lines[1] << line_two
+      dechunkified_lines[2] << line_three
     end
     dechunkified_lines.values.each { |line| line.flatten! }
     dechunkified_lines

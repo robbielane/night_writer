@@ -1,6 +1,12 @@
 require_relative '../lib/convert_braille'
 
 class ConvertBrailleTest < Minitest::Test
+  def test_night_read_outputs_file_sucessfully
+    assert_equal "Created 'test/output_message.txt' containing 67 characters",
+                `ruby ./lib/night_read.rb test/braille.txt test/output_message.txt`.chomp
+    assert $?.success?
+  end
+
   def test_converts_braille_letter_to_text_letter
     assert_equal 't', ConvertBraille.to_text(".0\n00\n0.")
   end
@@ -19,6 +25,6 @@ class ConvertBrailleTest < Minitest::Test
   end
 
   def test_converts_braille_numbers_to_text
-    assert_equal "123 456 7890", ConvertBraille.to_text(".00.0.00...0000.00...0000..0.0\n.0..0......0.0.00....000000.00\n00........00........00........") 
+    assert_equal "123 456 7890", ConvertBraille.to_text(".00.0.00...0000.00...0000..0.0\n.0..0......0.0.00....000000.00\n00........00........00........")
   end
 end
