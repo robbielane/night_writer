@@ -1,14 +1,14 @@
+require 'pry'
 require_relative 'charmap'
 class ConvertBraille
   def self.to_text(braille)
     line_characters = break_lines_into_characters(braille)
-
     line_characters = dechunkify(line_characters)
     chars = lines_to_chars(line_characters)
     string = ''
     chars.each { |index, value| string += CHARMAP.key(value) }
     add_upcase(string)
-    string
+    string = add_numbers(string)
   end
 
   def self.break_lines_into_characters(braille)
@@ -36,6 +36,19 @@ class ConvertBraille
   def self.add_upcase(string)
     string.gsub!(/(\^.)/, &:upcase) if string.include?('^')
     string.gsub!('^', '') if string.include?('^')
+  end
+
+  def self.add_numbers(string)
+    words = string.split(' ')
+    new_words = []
+    words.each do |word|
+      if word.start_with?('#')
+        new_words << word.chars.map { |char| char = CHARTONUM[char] }.join
+      else
+        new_words << word
+      end
+    end
+    new_words.join(' ')
   end
 
   def self.dechunkify(lines)

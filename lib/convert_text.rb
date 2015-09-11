@@ -1,4 +1,5 @@
 require_relative 'charmap'
+require 'pry'
 class ConvertText
 
   def self.to_braille(message)
@@ -13,6 +14,7 @@ class ConvertText
   def self.to_chunk(message)
     chunks = []
     message.gsub!(/([A-Z])/, '^\1').downcase! if message =~ /[A-Z]/
+    message.gsub!(/(\b[0-9])/, '#\1') if message =~ /[0-9]/
     chunks << message.slice!(0..39) until message == ''
     chunks
   end
